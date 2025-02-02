@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
@@ -27,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -44,6 +46,8 @@ fun WeatherPage(modifier: Modifier = Modifier, weatherViewModel: WeatherViewMode
 
     val weatherResult = weatherViewModel.weatherResult.observeAsState()
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -57,19 +61,26 @@ fun WeatherPage(modifier: Modifier = Modifier, weatherViewModel: WeatherViewMode
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            OutlinedTextField(value = city, onValueChange = { it ->
+            OutlinedTextField(value = city, onValueChange = {
                 city = it
             }, label = {
                 Text(text = "Search for your location")
             }, trailingIcon = {
                 IconButton(onClick = {
+                    keyboardController?.hide()
                     weatherViewModel.getData(city)
                 }) {
                     Icon(
                         imageVector = Icons.Default.Search, contentDescription = "Search icon"
                     )
                 }
-            }, modifier = Modifier.weight(1.0f), singleLine = true
+            }, modifier = Modifier.weight(1.0f), singleLine = true,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController?.hide()
+                        weatherViewModel.getData(city)
+                    }
+                )
             )
         } //end of search filed row
 
@@ -79,12 +90,11 @@ fun WeatherPage(modifier: Modifier = Modifier, weatherViewModel: WeatherViewMode
             }
 
             is NetworkResponse.Loading -> {
-//                Text(text = if (result.isLoading) "Loading" else "Not Loading")
                 CircularProgressIndicator()
             }
 
-            is NetworkResponse.Success<*> -> {
-                Text(text = result.data.toString())
+            is NetworkResponse.Success -> {
+                WeatherResultView(weatherResponse = result.data)
             }
 
             null -> {}
@@ -165,7 +175,7 @@ fun WeatherResultView(weatherResponse: WeatherResponse) {
                     WeatherKeyVal(
                         "Local Time", weatherResponse.location!!.localtime!!.split(" ")[1]
                     )
-                    WeatherKeyVal("Local Date", weatherResponse.location.localtime.split(" ")[0])
+                    WeatherKeyVal("Local Date", weatherResponse.location.localtime!!.split(" ")[0])
                 }
             }
         }
