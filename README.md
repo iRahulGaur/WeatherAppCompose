@@ -31,7 +31,7 @@ WeatherAppCompose is a simple yet functional weather application built using **J
    ```
 2. **Open the project in Android Studio** (Latest stable version recommended)
 3. **Get a free API key** from [WeatherAPI.com](https://www.weatherapi.com/) (or any weather API you're using)
-4. **Add API Key** in `local.properties` or within the Retrofit client
+4. **Add API Key** in `Constants.kt` or within the Retrofit client
 5. **Run the app** on an emulator or a physical device
 
 ### 🏰 Architecture
