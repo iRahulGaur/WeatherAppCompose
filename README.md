@@ -12,7 +12,6 @@ WeatherAppCompose is a simple yet functional weather application built using **J
 - **Retrofit** 🌐 (for API calls)
 - **Coroutines & Flow** 🛠 (for async operations)
 - **MVVM Architecture** 🏠
-- **Hilt (Dependency Injection)** 💉
 
 ### ✨ Features
 - 🌍 **Search for any city worldwide**
